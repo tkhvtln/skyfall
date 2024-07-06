@@ -1,12 +1,9 @@
 package com.example.skyfall
 
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
@@ -14,7 +11,6 @@ import com.android.volley.toolbox.Volley
 import com.example.skyfall.databinding.ActivityMainBinding
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
-import com.jakewharton.threetenabp.AndroidThreeTen
 
 const val API = "36f9315375fa4756a8884746240107"
 const val DEGREE_SIGN = "\u00B0"
@@ -27,32 +23,42 @@ class MainActivity : AppCompatActivity(), WeatherAdapter.ItemClickListener {
     private lateinit var weatherAdapter: WeatherAdapter
     private lateinit var url: String
 
-    private val converter: Converter = Converter()
     private var city: String = "Moscow"
     private var days: Int = 0
+    private var selectedDay = 0;
+
+    private val converter: Converter = Converter()
+    private val animatorController = AnimatorController()
 
     private val weatherModel: WeatherViewModel by viewModels()
+
+    private val backgrounds = arrayOf(
+        R.drawable.gradient_background_1,
+        R.drawable.gradient_background_2,
+        R.drawable.gradient_background_3,
+        R.drawable.gradient_background_4,
+        R.drawable.gradient_background_5,
+        R.drawable.gradient_background_6,
+        R.drawable.gradient_background_7,
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
-        AndroidThreeTen.init(this)
 
         initRecyclerView()
 
-        setCity("Ufa")
+        setCity("Sibay")
         setDays(7)
 
+        clearWeatherData()
         requestWeather()
         updateWeather()
+
+        animatorController.rotate(binding.ivBackground, 5000)
     }
 
     private fun setCity(city: String) {
@@ -98,7 +104,8 @@ class MainActivity : AppCompatActivity(), WeatherAdapter.ItemClickListener {
         binding.tvTemperature.text = currentTemperature
         Picasso.get().load(currentImageCondition).into(binding.imgWeather)
 
-        weatherList.add(WeatherData(currentTemperature, "Today", currentImageCondition))
+        val weatherData = WeatherData(currentTemperature, "Today", currentImageCondition, R.drawable.gradient_background_1)
+        weatherList.add(weatherData)
     }
 
     private fun parseNextDays(obj: JSONObject) {
@@ -113,15 +120,17 @@ class MainActivity : AppCompatActivity(), WeatherAdapter.ItemClickListener {
             val date = day.getString("date")
             val dayOfWeek = converter.getDayOfWeek(date)
 
-            val item = WeatherData(temperature, dayOfWeek, imageCondition)
-
-            weatherList.add(item)
+            val weatherData = WeatherData(temperature, dayOfWeek, imageCondition, R.drawable.gradient_background_2)
+            weatherList.add(weatherData)
         }
     }
 
     private fun updateWeather() {
         weatherModel.weatherList.observe(this) {
             weatherAdapter.submitList(it)
+
+            binding.tvDayOfWeek.text = "Today"
+            weatherAdapter.updateSelectedIndex(0)
         }
     }
 
@@ -129,14 +138,23 @@ class MainActivity : AppCompatActivity(), WeatherAdapter.ItemClickListener {
         weatherAdapter = WeatherAdapter(this)
         binding.rvWeathers.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.rvWeathers.adapter = weatherAdapter
+    }
 
-        weatherAdapter.updateSelectedIndex(0)
+    private fun clearWeatherData() {
+        binding.tvDayOfWeek.text = ""
+        binding.tvTemperature.text = ""
+        binding.tvDayOfWeek.text = ""
+        binding.imgWeather.setImageResource(0);
     }
 
     override fun onItemClickListener(indexDay: Int) {
         weatherAdapter.updateSelectedIndex(indexDay)
-        binding.tvTemperature.text = weatherList[indexDay].temperature
-        binding.txtDayOfWeek.text = weatherList[indexDay].dayOfWeek
-        Picasso.get().load(weatherList[indexDay].condition).into(binding.imgWeather)
+
+        animatorController.move(binding.tvTemperature, weatherList[indexDay].temperature, 300)
+        animatorController.move(binding.imgWeather, weatherList[indexDay].condition, 250)
+        animatorController.fade(binding.tvDayOfWeek, weatherList[indexDay].dayOfWeek, 200)
+        animatorController.changeBackground(binding.ivBackground, backgrounds[selectedDay], backgrounds[indexDay], 200)
+
+        selectedDay = indexDay
     }
 }

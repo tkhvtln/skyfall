@@ -19,7 +19,7 @@ class WeatherAdapter(private val itemClickListener: ItemClickListener): ListAdap
 
         fun bind(item: WeatherData, itemClickListener: ItemClickListener, indexDay: Int, isSelected: Boolean) {
             Picasso.get().load(item.condition).into(binding.imgWeather)
-            binding.txtTemperature.text = item.temperature
+            binding.tvTemperature.text = item.temperature
             binding.item.setOnClickListener() {
                 itemClickListener.onItemClickListener(indexDay)
             }
