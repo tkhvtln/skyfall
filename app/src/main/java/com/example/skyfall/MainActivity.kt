@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), WeatherAdapter.ItemClickListener {
     }
 
     private fun setDays(days: Int) {
-        this.days = days - 1
+        this.days = days
     }
 
     private fun requestWeather() {
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity(), WeatherAdapter.ItemClickListener {
     private fun parseNextDays(obj: JSONObject) {
         val daysArray = obj.getJSONObject("forecast").getJSONArray("forecastday")
 
-        for (i in 0 until days) {
+        for (i in 1 until days) {
             val day = daysArray[i] as JSONObject
 
             val temperature = day.getJSONObject("day").getString("avgtemp_c").split(".")[0] + DEGREE_SIGN
