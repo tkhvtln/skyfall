@@ -9,7 +9,6 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.skyfall.databinding.ActivityMainBinding
-import com.squareup.picasso.Picasso
 import org.json.JSONObject
 
 const val API = "36f9315375fa4756a8884746240107"
@@ -102,7 +101,7 @@ class MainActivity : AppCompatActivity(), WeatherAdapter.ItemClickListener {
         val currentImageCondition = converter.getImage(currentCondition)
 
         binding.tvTemperature.text = currentTemperature
-        Picasso.get().load(currentImageCondition).into(binding.imgWeather)
+        binding.imgWeather.setImageResource(currentImageCondition)
 
         val weatherData = WeatherData(currentTemperature, "Today", currentImageCondition, R.drawable.gradient_background_1)
         weatherList.add(weatherData)

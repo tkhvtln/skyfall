@@ -1,6 +1,5 @@
 package com.example.skyfall
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +7,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.skyfall.databinding.NextDayInfoBinding
-import com.squareup.picasso.Picasso
 
 class WeatherAdapter(private val itemClickListener: ItemClickListener): ListAdapter<WeatherData, WeatherAdapter.MyViewHolder>(Comparator()) {
 
@@ -18,7 +16,7 @@ class WeatherAdapter(private val itemClickListener: ItemClickListener): ListAdap
         private val binding = NextDayInfoBinding.bind(view)
 
         fun bind(item: WeatherData, itemClickListener: ItemClickListener, indexDay: Int, isSelected: Boolean) {
-            Picasso.get().load(item.condition).into(binding.imgWeather)
+            binding.imgWeather.setImageResource(item.condition)
             binding.tvTemperature.text = item.temperature
             binding.item.setOnClickListener() {
                 itemClickListener.onItemClickListener(indexDay)

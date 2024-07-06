@@ -50,8 +50,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation("com.airbnb.android:lottie:6.4.1")
     implementation("com.android.volley:volley:1.2.1")
-    implementation("com.squareup.picasso:picasso:2.8")
     implementation("com.jakewharton.threetenabp:threetenabp:1.4.4")
 }
