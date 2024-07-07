@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), WeatherAdapter.ItemClickListener {
         requestWeather()
         updateWeather()
 
-        animatorController.rotate(binding.ivBackground, 5000)
+        playBackgroundAnimation()
     }
 
     private fun setCity(city: String) {
@@ -144,6 +144,11 @@ class MainActivity : AppCompatActivity(), WeatherAdapter.ItemClickListener {
         binding.tvTemperature.text = ""
         binding.tvDayOfWeek.text = ""
         binding.imgWeather.setImageResource(0);
+    }
+
+    private fun playBackgroundAnimation() {
+        animatorController.changeBackground(binding.ivBackground, backgrounds[0], backgrounds[0], 200)
+        animatorController.rotate(binding.ivBackground, 5000)
     }
 
     override fun onItemClickListener(indexDay: Int) {
